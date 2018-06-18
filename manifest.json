@@ -1,0 +1,35 @@
+{
+  "manifest_version": 2,
+  "name": "Search Me",
+  "description": "An extension for Regex Search Developed as a home-work for ALOG's module",
+  "version": "1.0.0",
+  "icons": "images/icon.png",
+  "browser_action": {
+    "default_icon":  "images/icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "background": {
+    "scripts": ["js/background.js"],
+    "persistent": true
+  },
+  "content_scripts": [
+    {
+      "matches": [ "http://*/*", "https://*/*", "file://*/*" ],
+      "js": [ "js/content.js" ]
+    }
+  ],
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "windows": "Ctrl+Shift+F",
+        "mac": "Command+Shift+F",
+        "chromeos": "Ctrl+Shift+F",
+        "linux": "Ctrl+Shift+F"
+      }
+    }
+  }
+}
