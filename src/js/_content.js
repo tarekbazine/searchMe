@@ -166,7 +166,7 @@ function validateRegex(pattern) {
         return false;
     }
 }
-console.log("eeeeeeeeeeeeeeeeee2")
+console.log("eeeeeeeeeeeeeeeeee2sssssss")
 
 /* Find and highlight regex matches in web page from a given regex string or pattern */
 function search(regexString, configurationChanged) {

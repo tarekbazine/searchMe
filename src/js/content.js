@@ -19,6 +19,11 @@ var SELECTED_CLASS = 'selected';
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if ('search' == request.message) {
         search(request.regexString);
+    }else if ('extensionStatChanged' == request.message){
+        chrome.runtime.sendMessage({
+            'message': 'extensionStatChanged',
+            'extensionIsOn': request.extensionIsOn
+        });
     }
 });
 
