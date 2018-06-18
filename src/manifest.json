@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
 
-  "name": "Chrome Regex Search",
+  "name": "Search Me",
   "description": "An extension for Regex Search in lieu of Chrome's CTRL+F",
   "version": "1.0.7",
   "icons": {
