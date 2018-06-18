@@ -7,15 +7,16 @@ var DEFAULT_TEXT_COLOR = '#000000';
 var UNEXPANDABLE = /(script|style|svg|audio|canvas|figure|video|select|input|textarea)/i;
 var ELEMENT_NODE_TYPE = 1;
 
+// Resultat de la recherche
 var searchInfo;
 
-
+// Attributs de la recherche
 var HIGHLIGHT_TAG = 'highlight-tag';
 var HIGHLIGHT_CLASS = 'highlighted';
 var SELECTED_CLASS = 'selected';
 
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if ('search' == request.message) {
         search(request.regexString);
     }
@@ -69,7 +70,6 @@ function highlight(regex, highlightColor, selectedColor, textColor) {
     highlightRecursive(document.getElementsByTagName('body')[0]);
 }
 
-
 /* Check if the given node is a text node */
 function isTextNode(node) {
     return node && node.nodeType === 3;
@@ -84,7 +84,7 @@ function isExpandable(node) {
 /* Validate that a given pattern string is a valid regex */
 function validateRegex(pattern) {
     try {
-        var regex = new RegExp(pattern);
+        var regex = new RegExp(pattern,'i');
         return regex;
     } catch (e) {
         return false;
@@ -103,13 +103,14 @@ function removeHighlight() {
 };
 
 
+
 function initSearchInfo(pattern) {
     var pattern = typeof pattern !== 'undefined' ? pattern : '';
     searchInfo = {
-        regexString: pattern,
-        selectedIndex: 0,
-        highlightedNodes: [],
-        length: 0
+        regexString : pattern,
+        selectedIndex : 0,
+        highlightedNodes : [],
+        length : 0
     }
 }
 

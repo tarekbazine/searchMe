@@ -14,6 +14,7 @@ $(document).ready(function() {
     $("a#clear").click(function () {
         console.log("clear")
         $("input#regex_input").val('')
+        passInputToContentScript()
         $("input#regex_input").focus()
     })
 
@@ -23,12 +24,10 @@ $(document).ready(function() {
         passInputToContentScript()
 
         // save searched regex
-        saveRegex($(this).val())
-
-        // get local storage
-        chrome.storage.local.get(['regex'], function(result) {
-            console.log('Value currently is ' + result.regex);
-        });
+        var value = $(this).val();
+        if (value != '' && value != undefined) {
+            saveRegex(value)
+        }
     })
 });
 
@@ -67,7 +66,7 @@ function passInputToContentScript(){
 
 function validateRegex(pattern) {
     try {
-        var regex = new RegExp(pattern);
+        var regex = new RegExp(pattern,'i');
         return regex;
     } catch (e) {
         return false;
@@ -92,3 +91,15 @@ function updateRestuls(nbResults) {
 
     $('#nb_result').text(nbResults);
 }
+
+
+// listener
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if ('search_new_tab' == request.message) {
+        // get local storage
+        chrome.storage.local.get(['regex'], function(result) {
+            search(result.regex);
+            // console.log('Value currently is ' + result.regex);
+        });
+    }
+});
