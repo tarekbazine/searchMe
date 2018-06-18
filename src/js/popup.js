@@ -18,12 +18,12 @@ $(document).ready(function() {
     })
 
     // key pressed listener
-    $(this).on('input',function() {
+    $("input#regex_input").on('input',function() {
         // search
         passInputToContentScript()
 
         // save searched regex
-        saveRegex($("input#regex_input").val())
+        saveRegex($(this).val())
 
         // get local storage
         chrome.storage.local.get(['regex'], function(result) {
@@ -72,4 +72,23 @@ function validateRegex(pattern) {
     } catch (e) {
         return false;
     }
+}
+
+
+/* Received returnSearchInfo message, set badge text with number of results */
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if ('returnSearchInfo' == request.message) {
+        updateRestuls(request.numResults);
+    }
+});
+
+function updateRestuls(nbResults) {
+    if(0 == nbResults)
+        $('#result_container').css('background-color', '#ffebee');
+    else if(nbResults<200)
+        $('#result_container').css('background-color', '#e1f5fe');
+    else
+        $('#result_container').css('background-color', '#a5d6a7');
+
+    $('#nb_result').text(nbResults);
 }

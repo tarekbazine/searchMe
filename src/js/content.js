@@ -15,7 +15,7 @@ var HIGHLIGHT_CLASS = 'highlighted';
 var SELECTED_CLASS = 'selected';
 
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if ('search' == request.message) {
         search(request.regexString);
     }
@@ -28,42 +28,47 @@ function search(regexString) {
     if (regex && regexString != '') { // new valid regex string
         removeHighlight();
         highlight(regex, DEFAULT_HIGHLIGHT_COLOR, DEFAULT_SELECTED_COLOR, DEFAULT_TEXT_COLOR);
+        returnSearchInfo('search');
+        initSearchInfo(regexString);
     } else { // blank string or invalid regex
         removeHighlight();
+        initSearchInfo(regexString);
+        returnSearchInfo('search');
     }
-
+}
 
 /* Highlight all text that matches regex */
 function highlight(regex, highlightColor, selectedColor, textColor) {
-        function highlightRecursive(node) {
-            if (isTextNode(node)) {
-                var index = node.data.search(regex);
-                if (index >= 0 && node.data.length > 0) {
-                    var matchedText = node.data.match(regex)[0];
-                    var matchedTextNode = node.splitText(index);
-                    matchedTextNode.splitText(matchedText.length);
-                    var spanNode = document.createElement(HIGHLIGHT_TAG);
-                    spanNode.className = HIGHLIGHT_CLASS;
-                    spanNode.style.backgroundColor = highlightColor;
-                    spanNode.style.color = textColor;
-                    spanNode.appendChild(matchedTextNode.cloneNode(true));
-                    matchedTextNode.parentNode.replaceChild(spanNode, matchedTextNode);
-                    searchInfo.highlightedNodes.push(spanNode);
-                    searchInfo.length += 1;
-                    return 1;
-                }
-            } else if (isExpandable(node)) {
-                var children = node.childNodes;
-                for (var i = 0; i < children.length; ++i) {
-                    var child = children[i];
-                    i += highlightRecursive(child);
-                }
+    function highlightRecursive(node) {
+        if (isTextNode(node)) {
+            var index = node.data.search(regex);
+            if (index >= 0 && node.data.length > 0) {
+                var matchedText = node.data.match(regex)[0];
+                var matchedTextNode = node.splitText(index);
+                matchedTextNode.splitText(matchedText.length);
+                var spanNode = document.createElement(HIGHLIGHT_TAG);
+                spanNode.className = HIGHLIGHT_CLASS;
+                spanNode.style.backgroundColor = highlightColor;
+                spanNode.style.color = textColor;
+                spanNode.appendChild(matchedTextNode.cloneNode(true));
+                matchedTextNode.parentNode.replaceChild(spanNode, matchedTextNode);
+                searchInfo.highlightedNodes.push(spanNode);
+                searchInfo.length += 1;
+                return 1;
             }
-            return 0;
+        } else if (isExpandable(node)) {
+            var children = node.childNodes;
+            for (var i = 0; i < children.length; ++i) {
+                var child = children[i];
+                i += highlightRecursive(child);
+            }
         }
-        highlightRecursive(document.getElementsByTagName('body')[0]);
-    };
+        return 0;
+    }
+
+    highlightRecursive(document.getElementsByTagName('body')[0]);
 }
+
 
 /* Check if the given node is a text node */
 function isTextNode(node) {
@@ -78,10 +83,10 @@ function isExpandable(node) {
 
 /* Validate that a given pattern string is a valid regex */
 function validateRegex(pattern) {
-    try{
+    try {
         var regex = new RegExp(pattern);
         return regex;
-    } catch(e) {
+    } catch (e) {
         return false;
     }
 }
@@ -98,15 +103,25 @@ function removeHighlight() {
 };
 
 
-
 function initSearchInfo(pattern) {
     var pattern = typeof pattern !== 'undefined' ? pattern : '';
     searchInfo = {
-        regexString : pattern,
-        selectedIndex : 0,
-        highlightedNodes : [],
-        length : 0
+        regexString: pattern,
+        selectedIndex: 0,
+        highlightedNodes: [],
+        length: 0
     }
+}
+
+/* Send message with search information for this tab */
+function returnSearchInfo(cause) {
+    chrome.runtime.sendMessage({
+        'message' : 'returnSearchInfo',
+        'regexString' : searchInfo.regexString,
+        'currentSelection' : searchInfo.selectedIndex,
+        'numResults' : searchInfo.length,
+        'cause' : cause
+    });
 }
 
 initSearchInfo();
