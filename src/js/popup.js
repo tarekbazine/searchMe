@@ -42,6 +42,7 @@ $(document).ready(function() {
             saveRegex(value)
         }
     })
+
 });
 
 function saveRegex(regex) {

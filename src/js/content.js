@@ -15,7 +15,6 @@ var HIGHLIGHT_TAG = 'highlight-tag';
 var HIGHLIGHT_CLASS = 'highlighted';
 var SELECTED_CLASS = 'selected';
 
-
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if ('search' == request.message) {
         search(request.regexString);
@@ -133,12 +132,12 @@ function returnSearchInfo(cause) {
 // listener
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if ('searchNt' == request.message) {
-        console.log("received!!")
-        // get local storage
-        chrome.storage.local.get(['regex'], function(result) {
-            search(result.regex);
-        })
-    }
+        console.log("received!! "+extensionIsOn)
+           // get local storage
+            chrome.storage.local.get(['regex'], function (result) {
+                search(result.regex);
+            })
+        }
 });
 
 
