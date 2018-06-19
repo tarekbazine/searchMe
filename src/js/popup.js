@@ -1,13 +1,26 @@
 var ERROR_COLOR = '#ffb1a8';
 var WHITE_COLOR = '#ffffff';
 
+let extensionIsOn = true;
+
 $(document).ready(function() {
     $("input#regex_input").focus()
 
     // Activer l'extension
     $("a#active_btn").click(function () {
-        console.log("turn on")
-        $("div#img_container img")[0].src = "icons/on.png"
+        if (extensionIsOn){
+            console.log("turn off")
+            $("input#regex_input").val('')
+            passInputToContentScript()
+            $("#regex_input").prop('disabled', true);
+            $("div#img_container img")[0].src = "icons/off.png"
+        } else {
+            console.log("turn on")
+            $("#regex_input").prop('disabled', false);
+            $("div#img_container img")[0].src = "icons/on.png"
+        }
+        extensionStatChanged();
+        extensionIsOn = !extensionIsOn;
     })
 
     // Nettoyer le champs de la recherche
@@ -93,3 +106,17 @@ function updateRestuls(nbResults) {
 }
 
 
+
+function extensionStatChanged() {
+    chrome.tabs.query(
+        { 'active': true, 'currentWindow': true },
+        function(tabs) {
+            if ('undefined' != typeof tabs[0].id && tabs[0].id) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    'message': 'extensionStatChanged',
+                    'extensionIsOn': extensionIsOn
+                })
+            }
+        }
+    );
+}
