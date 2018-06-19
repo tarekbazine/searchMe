@@ -1,4 +1,4 @@
-var ERROR_COLOR = '#ffb1a8';
+ar ERROR_COLOR = '#ffb1a8';
 var WHITE_COLOR = '#ffffff';
 
 let extensionIsOn = true;
