@@ -1,4 +1,4 @@
-ar ERROR_COLOR = '#ffb1a8';
+var ERROR_COLOR = '#ffb1a8';
 var WHITE_COLOR = '#ffffff';
 
 let extensionIsOn = true;
@@ -15,7 +15,7 @@ $(document).ready(function () {
             $("#regex_input").prop('disabled', true);
             $("div#img_container img")[0].src = "icons/off.png"
         } else {
-            chrome.storage.local.get(['extensionIsOn', 'regex'],
+            chrome.storage.local.get(['regex'],
                 function (results) {
                     $("input#regex_input").val(results.regex);
                     passInputToContentScript();
@@ -56,6 +56,9 @@ $(document).ready(function () {
             extensionIsOn = results.extensionIsOn == 'undefined' ? true : results.extensionIsOn;
             $("input#regex_input").val(results.regex);
             if (!extensionIsOn) {
+                chrome.browserAction.setIcon({
+                    path: '../icons/icon_off.png'
+                });
                 $("input#regex_input").val('');
                 $("#regex_input").prop('disabled', true);
                 $("div#img_container img")[0].src = "icons/off.png"
