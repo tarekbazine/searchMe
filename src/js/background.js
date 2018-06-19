@@ -1,15 +1,21 @@
 chrome.tabs.onCreated.addListener(function (tab) {
     // Search
-    chrome.tabs.query(
-        { 'active': false, 'currentWindow': false },
-        function(tabs) {
-            if ('undefined' != typeof tabs[0].id && tabs[0].id) {
-                chrome.tabs.sendMessage(tabs[0].id, {
-                    'message': 'search_new_tab'
-                })
-            }
-        }
-    );
+    console.log(tab.id);
+    if ('undefined' != typeof tab.id && tab.id) {
+        chrome.tabs.executeScript(tab.id, {file:"js/jquery-3.3.1.min.js"}, function() {
+            chrome.tabs.executeScript(tab.id, {file: "js/popup.js"}, function () {
+                const lastErr = chrome.runtime.lastError;
+                if (lastErr) console.log('tab: ' + tab.id + ' lastError: ' + JSON.stringify(lastErr));
+                // This executes only after your content script executes
+                console.log("yessss");
+                chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+                    chrome.tabs.sendMessage(tab.id, {
+                        'message': 'searchNt'
+                    })
+                });
+            });
+        });
+    }
 })
 /* Received returnSearchInfo message, set badge text with number of results */
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {

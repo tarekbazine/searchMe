@@ -13,7 +13,8 @@
   "permissions": [
     "activeTab",
     "storage",
-    "tabs"
+    "tabs",
+    "*://*/*"
   ],
   "background": {
     "scripts": ["js/background.js"],
@@ -34,5 +35,6 @@
         "linux": "Ctrl+Shift+F"
       }
     }
-  }
+  },
+  "web_accessible_resources": ["js/popup.js"]
 }

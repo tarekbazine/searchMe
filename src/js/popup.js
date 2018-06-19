@@ -93,13 +93,3 @@ function updateRestuls(nbResults) {
 }
 
 
-// listener
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if ('search_new_tab' == request.message) {
-        // get local storage
-        chrome.storage.local.get(['regex'], function(result) {
-            search(result.regex);
-            // console.log('Value currently is ' + result.regex);
-        });
-    }
-});
